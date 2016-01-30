@@ -3,7 +3,7 @@ module ray
     importall vec3
     import camera: Camera
     import Base: start, done, next
-    export Ray, Screen, start, done, next
+    export Ray, Screen, perspectiveRay, orthographicRay
 
     type Ray
         origin::Vec3f
@@ -19,41 +19,38 @@ module ray
     width is screen's width
     """
     type Screen
-        cam::Camera
         focus::Float64
         height::Float64
         width::Float64
     end
-    
-    """
-    This is the uniform ray iterator, for output which primary ray to shoot
-    """
-    type PrimaryRayIterator
-        right::Vec3f
-        up::Vec3f
-        origin::Vec3f
-        center::Vec3f
-        dx::Float64
-        dy::Float64
-        x_range::Int64
-        y_range::Int64
-        ray::Ray
+
+    function rayPos(screen: Screen, cam: Camera, x: Float64, y: Float64)
+        """
+        helper function, used to generate the perspective ray and orthographic ray shooting position
+        """
+        origin = cam.pos + screen.focus * cam.front
+        dx = cross(cam.up, cam.front)
+        dy = cam.up
+        origin = origin + (x*width/2)*dx + (y*height/2)*dy
+    end
+    function perspectiveRay(screen: Screen, cam: Camera, x: Float64, y: Float64)
+        """
+        given screen, cam and (x,y) ratio of the camera, output the ray from perspective projection
+        """
+        pos = rayPos(screen, cam, x, y)
+        dir = normalise(origin - cam.origin)
+        return Ray(origin, dir)
     end
 
-    start(iter::PrimaryRayIterator) = (-iter.x_range, -iter.y_range)
-    function next(iter::PrimaryRayIterator, state::Tuple{Float64, Float64})
-        x,y,ray = state
-        y += 1
-        if y > iter.y_range
-            x += 1
-            y = -iter.y_range
-        end
-        iter.ray.origin = iter.center+x*iter.dx*iter.right+y*iter.dy*iter.up
-        iter.ray.dir = normalise(iter.ray.dir)
-        return (iter.ray, (x,y))
+
+    function orthographicRay(screen: Screen, cam: Camera, x: Float64, y: Float64)
+        """
+        given screen, cam and (x,y) ratio of the camera, output the ray from othographic projection
+        """
+        pos = rayPos(screen, cam, x, y)
+        dir = cam.dir
+        return Ray(origin, dir)
     end
-    done(iter::PrimaryRayIterator, state::Tuple{Float64, Float64}) = state[0]>iter.x_range
-    
-    # uniformRays(screen::Screen, ) = PrimaryRayIterator()
+
 
 end

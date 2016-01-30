@@ -1,7 +1,7 @@
 module camera
     importall vec3
 
-    export Camera, pitch!, yaw!, roll!, move!, start, done, next
+    export Camera, pitch!, yaw!, roll!, move! 
     @enum CameraMethod othographic=0 perspective=1
     @enum SampleMethod uniform=0 multi_jittered=1
 
@@ -25,7 +25,7 @@ module camera
     function pitch!(cam::Camera, v::Float64)
         right = cross(cam.up, cam.front)
         right = normalise(cos(v)*right+sin(v)*cam.up)
-        cam.up = cross(front, right)
+        cam.up = cross(cam.front, right)
         cam
     end
     pitch!{T<:Number}(cam::Camera, v::T) = pitch!(cam,Float64(v))

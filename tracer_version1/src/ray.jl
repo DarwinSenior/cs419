@@ -24,32 +24,33 @@ module ray
         width::Float64
     end
 
-    function rayPos(screen: Screen, cam: Camera, x: Float64, y: Float64)
+    function rayPos(screen:: Screen, cam:: Camera, x:: Float64, y:: Float64)
         """
         helper function, used to generate the perspective ray and orthographic ray shooting position
         """
         origin = cam.pos + screen.focus * cam.front
         dx = cross(cam.up, cam.front)
         dy = cam.up
-        origin = origin + (x*width/2)*dx + (y*height/2)*dy
+        origin = origin + (x*screen.width/2)*dx + (y*screen.height/2)*dy
+        return origin
     end
-    function perspectiveRay(screen: Screen, cam: Camera, x: Float64, y: Float64)
+    function perspectiveRay(screen:: Screen, cam:: Camera, x:: Float64, y:: Float64)
         """
         given screen, cam and (x,y) ratio of the camera, output the ray from perspective projection
         """
         pos = rayPos(screen, cam, x, y)
-        dir = normalise(origin - cam.origin)
-        return Ray(origin, dir)
+        dir = normalise(pos - cam.origin)
+        return Ray(pos, dir)
     end
 
 
-    function orthographicRay(screen: Screen, cam: Camera, x: Float64, y: Float64)
+    function orthographicRay(screen:: Screen, cam:: Camera, x:: Float64, y:: Float64)
         """
         given screen, cam and (x,y) ratio of the camera, output the ray from othographic projection
         """
         pos = rayPos(screen, cam, x, y)
         dir = cam.dir
-        return Ray(origin, dir)
+        return Ray(pos, dir)
     end
 
 

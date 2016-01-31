@@ -39,7 +39,7 @@ module ray
         given screen, cam and (x,y) ratio of the camera, output the ray from perspective projection
         """
         pos = rayPos(screen, cam, x, y)
-        dir = normalise(pos - cam.origin)
+        dir = normalise(pos - cam.rrigin)
         return Ray(pos, dir)
     end
 

@@ -1,8 +1,8 @@
 module geometry
     importall vec3
-    
-    export Geometry, Sphere, Plane,Triangle
-    export intersect 
+    import Base: intersect
+    import ray: Ray
+    export Geometry, Sphere, Plane,Triangle, intersect
     abstract Geometry
 
     immutable Sphere <: Geometry
@@ -15,7 +15,7 @@ module geometry
     norm*x+dist=0 as the equation
     """
     immutable Plane <: Geometry
-        norm::Vec3f        
+        norm::Vec3f
         dist::Float64
     end
 
@@ -30,19 +30,20 @@ module geometry
     """
     function solve_quad(a, b, c)
         delta = b^2-4a*c
-        if sqrt_delta<0
+        if delta<0
             return -Inf, Inf
         end
         sqrt_delta = sqrt(delta)
         return (-b-sqrt_delta)/2a, (-b+sqrt_delta)/2a
-
+    end
     """
     intersect with the sphere, it should result to two point (real or imaginary)
     however, we will only interested in the nearest positive point,
     if point does not exists, return +infinity
     """
-    function intersect(sphere::Shpere, ray::Ray)
-        a = dot(ray.dir, ray.dir)    
+    function intersect(sphere::Sphere, ray::Ray)
+        println("tested")
+        a = dot(ray.dir, ray.dir)
         o_c = ray.origin-sphere.center
         b = 2.0*dot(o_c, ray.dir)
         c = dot(o_c, o_c)
@@ -91,7 +92,7 @@ module geometry
 
         # Check if point is in triangle
         return (u >= 0) && (v >= 0) && (u + v < 1)
-
+    end
     """
     intersect with the triangle, return the nearest positive point or +infinity
     """

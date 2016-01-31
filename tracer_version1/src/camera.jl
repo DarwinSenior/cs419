@@ -1,7 +1,7 @@
 module camera
     importall vec3
 
-    export Camera, pitch!, yaw!, roll!, move! 
+    export Camera, pitch!, yaw!, roll!, move!
     @enum CameraMethod othographic=0 perspective=1
     @enum SampleMethod uniform=0 multi_jittered=1
 
@@ -14,7 +14,7 @@ module camera
     Camera() = Camera(Vec3f(0,1,0), Vec3f(0,0,1), Vec3f(0,0,0))
 
     function move!(cam::Camera, v::Float64)
-        cam.pos = cam.pos + cam.front*v 
+        cam.pos = cam.pos + cam.front*v
         cam
     end
     move!{T<:Number}(cam::Camera, v::T) = move!(cam,Float64(v))
@@ -52,5 +52,5 @@ module camera
         cam
     end
     roll!{T<:Number}(cam::Camera, v::T) = roll!(cam,Float64(v))
-        
+
 end

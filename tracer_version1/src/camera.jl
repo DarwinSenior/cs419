@@ -6,8 +6,8 @@ module camera
     @enum SampleMethod uniform=0 multi_jittered=1
 
     type Camera
-        up::Vec3f # z axis
-        front::Vec3f # x axis
+        up::Vec3f # y axis
+        front::Vec3f # z axis
         pos::Vec3f
     end
 

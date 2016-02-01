@@ -42,11 +42,10 @@ module geometry
     if point does not exists, return +infinity
     """
     function intersect(sphere::Sphere, ray::Ray)
-        println("tested")
         a = dot(ray.dir, ray.dir)
         o_c = ray.origin-sphere.center
         b = 2.0*dot(o_c, ray.dir)
-        c = dot(o_c, o_c)
+        c = dot(o_c, o_c) - sphere.r^2
         dist1, dist2 = solve_quad(a, b, c)
         if dist1>0
             return dist1
@@ -73,10 +72,11 @@ module geometry
     http://www.blackpawn.com/texts/pointinpoly/
     """
     function inside_triangle(t::Triangle, p::Vec3f)
+        # @printf "triangle %s" string(p)
         # Compute vectors
         v0 = t.p2-t.p0
         v1 = t.p1-t.p0
-        v3 = p-t.p0
+        v2 = p-t.p0
 
         # Compute dot products
         dot00 = dot(v0, v0)
@@ -97,10 +97,10 @@ module geometry
     intersect with the triangle, return the nearest positive point or +infinity
     """
     function intersect(triangle::Triangle, ray::Ray)
-        n = cross(triangle.p0-triangle.p1, triangle.p0-triangle.p2)
-        d = norm(triangle.p0)/dot(n, triangle.p0)
-        dist = (d-dot(ray.origin, n))/dot(ray.origin, n)
-        if dist<0 || !inside_triangle(triangle, ray.origin+dist*ray.dir)
+        n = normalise(cross(triangle.p0-triangle.p1, triangle.p0-triangle.p2))
+        d = dot(n, triangle.p0)
+        dist = (d-dot(ray.origin, n))/dot(ray.dir, n)
+        if dist<0.0 || !inside_triangle(triangle, ray.origin+dist*ray.dir)
             return Inf
         else
             return dist

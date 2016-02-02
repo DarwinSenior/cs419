@@ -2,16 +2,15 @@ module render
     using Images
     import geometry: Geometry, intersect, Sphere, Plane, Triangle
     import camera: Camera
-    import ray: Ray, Screen, orthographicRay, perspectiveRay
-    import sample2d: uniform2d, multi_jittered, hammersley
+    import ray: Ray, Screen, shootRay
+    import sample2d: uniform2d, multi_jittered
     import ImageView: view
     import Colors: RGB
     import vec3:Vec3f
+    import light:Light
 
     export Scene, renderScene, somerendering
 
-    type Light
-    end
 
     type Scene
         objects::Vector{Tuple{Geometry, RGB}} # currently there will be no material available
@@ -45,7 +44,7 @@ module render
         samples = uniform2d(n)
         for x in 1:n
             for y in 1:n
-                @inbounds ray = perspectiveRay(scene.screen, scene.camera, samples[x,y,1], samples[x,y,2])
+                @inbounds ray = shootRay(scene.screen, scene.camera, samples[x,y,1], samples[x,y,2])
                 min_dist = Inf
                 cur_colour = RGB(0,0,0) # something
                 for (geo, colour) in scene.objects

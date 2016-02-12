@@ -1,0 +1,17 @@
+cmake_minimum_required (VERSION 2.8)
+project (raytracer)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+file(GLOB sources src/*.cpp src/*.h)
+file(GLOB tests test/*.cc)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+find_package( OpenCV REQUIRED )
+include_directories(${OpenCV_INCLUDE_DIRS})
+
+add_library(tracer_lib ${sources})
+add_executable(raytracer src/main.cc)
+add_executable(test ${tests})
+target_link_libraries(raytracer tracer_lib ${OpenCV_LIBS})
+target_link_libraries(tracer_lib ${OpenCV_LIBS})
+target_link_libraries(test tracer_lib ${OpenCV_LIBS})

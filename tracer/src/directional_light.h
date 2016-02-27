@@ -10,6 +10,7 @@ public:
     DirLight(cv::Vec3f dir, float i);
     float intensity(const Intersect& inter);
     float i(){ return m_i; }
+    cv::Vec3f& dir(){ return m_dir; }
 private:
     cv::Vec3f m_dir; // directional light
     float m_i; // intensity

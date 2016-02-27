@@ -7,8 +7,8 @@
 #include "intersect.h"
 #include <utility>
 
-class Sphere: public Geometry{
-public:
+class Sphere : public Geometry {
+   public:
     /**
      *  the sphere is specify by center and its radius
      */
@@ -16,11 +16,9 @@ public:
 
     void intersect(const Ray& ray, Intersect& inter) const;
 
-private:
-
+   private:
     cv::Vec3f m_center;
     float m_radius;
 };
-
 
 #endif

@@ -27,6 +27,7 @@ void BHV_CODE_GENERATOR() {
 
 namespace {
 
+using idx_t = vector<int>::iterator;
 const float INF = std::numeric_limits<float>::infinity();
 
 int number_of_intersection = 0;
@@ -60,17 +61,19 @@ class SplitCmp {
 
 template <class T>
 void split_node(BHVNode* node, int axis, const vector<T>& geos) {
-    auto& indicies = node->indicies;
-    nth_element(indicies.begin(), indicies.begin() + indicies.size() / 2,
-                indicies.end(), SplitCmp<T>(axis, geos));
+    const auto& begin = node->begin;
+    const auto& end = node->end;
+    const auto& middle = begin + (end - begin) / 2;
+    nth_element(begin, middle, end, SplitCmp<T>(axis, geos));
 }
 
 template <class T>
-BHVNode* create_node(const vector<T>& geos, vector<int>::iterator begin,
-                     vector<int>::iterator end) {
+BHVNode* create_node(const vector<T>& geos, idx_t begin, idx_t end) {
     BHVNode* node = new BHVNode();
-    node->indicies = vector<int>(begin, end);
-    node->box = AABB(node->indicies, geos);
+    // node->indicies = vector<int>(begin, end);
+    node->begin = begin;
+    node->end = end;
+    node->box = AABB(begin, end, geos);
     node->left = NULL;
     node->right = NULL;
     return node;
@@ -80,10 +83,10 @@ BHVNode* create_node(const vector<T>& geos, vector<int>::iterator begin,
  *  testing intersection on leaf case, try intersect every node
  */
 template <class T>
-void intersect_(const vector<int> indicies, const vector<T>& geos,
+void intersect_(const idx_t begin, const idx_t end, const vector<T>& geos,
                 const Ray& ray, Intersect& inter) {
-    for (auto& idx : indicies) {
-        geos[idx].intersect(ray, inter);
+    for (auto it = begin; it < end; it++) {
+        geos[*it].intersect(ray, inter);
     }
 }
 
@@ -95,7 +98,7 @@ template <class T>
 void intersect_(const BHVNode* node, const vector<T>& geos, const Ray& ray,
                 Intersect& inter) {
     if (node->is_leaf()) {
-        intersect_(node->indicies, geos, ray, inter);
+        intersect_(node->begin, node->end, geos, ray, inter);
     } else {
         float left_dist = node->left->box.intersect(ray);
         float right_dist = node->right->box.intersect(ray);
@@ -118,7 +121,7 @@ void intersect_(const BHVNode* node, const vector<T>& geos, const Ray& ray,
 template <class T>
 BHV<T>::BHV(vector<T> geos, vector<int> indicies)
     : m_geos(geos), m_indicies(indicies), m_root(NULL) {
-    m_root = create_node(geos, indicies.begin(), indicies.end());
+    m_root = create_node(geos, m_indicies.begin(), m_indicies.end());
     build(m_root, 0);
 }
 
@@ -145,12 +148,14 @@ bool BHV<T>::intersect(const Ray& ray, Intersect& inter) const {
 template <class T>
 void BHV<T>::build(BHVNode* node, size_t depth) {
     int axis = depth % 3;
-    if (depth < MAX_DEPTH && node->indicies.size() > MIN_ITEMS) {
+    int size = node->end - node->begin;
+    if (depth < MAX_DEPTH && size > MIN_ITEMS) {
         split_node(node, axis, m_geos);
-        auto& idxs = node->indicies;
-        auto middle = idxs.begin() + idxs.size() / 2;
-        node->left = create_node(m_geos, idxs.begin(), middle);
-        node->right = create_node(m_geos, middle, idxs.end());
+        const auto& begin = node->begin;
+        const auto& end = node->end;
+        const auto& middle = begin + (end - begin) / 2;
+        node->left = create_node(m_geos, begin, middle);
+        node->right = create_node(m_geos, middle, end);
         build(node->left, depth + 1);
         build(node->right, depth + 1);
     }
@@ -171,8 +176,8 @@ void BHV<T>::print() {
 
 template <class T>
 void BHV<T>::print(BHVNode* node, const string& prefix) {
-    cout << prefix << "(" << node->box.volume() << ',' << node->indicies.size()
-         << ")" << endl;
+    cout << prefix << "(" << node->box.volume() << ','
+         << node->end - node->begin << ")" << endl;
 
     if (node->left && prefix.length() < 5) print(node->left, prefix + "L");
 

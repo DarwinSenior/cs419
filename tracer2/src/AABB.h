@@ -5,15 +5,18 @@
 #include <vector>
 
 #include "ray.h"
-#include "triangle.h"
 #include "sphere.h"
+#include "triangle.h"
 
 class AABB {
    public:
     template <class T>
     AABB(const std::vector<T>& verties);
     template <class T>
-    AABB(const std::vector<int>& indicies,
+    AABB(const std::vector<int>& indicies, const std::vector<T>& verties);
+    template <class T>
+    AABB(const std::vector<int>::const_iterator begin,
+         const std::vector<int>::const_iterator end,
          const std::vector<T>& verties);
     AABB();
     AABB(const cv::Vec3f min, const cv::Vec3f max);

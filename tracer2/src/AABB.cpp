@@ -12,12 +12,15 @@ void AABB_CODE_GENERATOR() {
     vector<Triangle> tris;
     vector<Sphere> sphs;
     vector<int> idxs;
+    AABB e(idxs.begin(), idxs.end(), tris);
+    AABB f(idxs.begin(), idxs.end(), tris);
     AABB a(idxs, tris);
     AABB b(idxs, sphs);
     AABB c(tris);
     AABB d(sphs);
 }
 namespace {
+using idx_t = std::vector<int>::const_iterator;
 float INF = std::numeric_limits<float>::infinity();
 void maximum_update(Vec3f& max_vec, const Vec3f& v) {
     max_vec[0] = std::max(v[0], max_vec[0]);
@@ -62,10 +65,10 @@ void minimum_update(Vec3f& v, const Sphere& sphere) {
 }
 
 template <class T>
-Vec3f maximum(const vector<T>& geos, const vector<int>& indicies) {
+Vec3f maximum(const vector<T>& geos, const idx_t begin, const idx_t end) {
     auto max_vec = Vec3f(-INF, -INF, -INF);
-    for (auto& idx : indicies) {
-        maximum_update(max_vec, geos[idx]);
+    for (auto idx = begin; idx < end; idx++) {
+        maximum_update(max_vec, geos[*idx]);
     }
     return max_vec;
 }
@@ -80,10 +83,10 @@ Vec3f maximum(const vector<T>& vecs) {
 }
 
 template <class T>
-Vec3f minimum(const vector<T>& geos, const vector<int>& indicies) {
+Vec3f minimum(const vector<T>& geos, idx_t begin, idx_t end) {
     auto min_vec = Vec3f(INF, INF, INF);
-    for (auto& idx : indicies) {
-        minimum_update(min_vec, geos[idx]);
+    for (auto idx = begin; idx < end; idx++) {
+        minimum_update(min_vec, geos[*idx]);
     }
     return min_vec;
 }
@@ -114,11 +117,17 @@ AABB::AABB(const vector<T>& verties) {
     m_max = maximum(verties);
 }
 
+
 template <class T>
-AABB::AABB(const vector<int>& indicies, const vector<T>& verties) {
-    m_min = minimum(verties, indicies);
-    m_max = maximum(verties, indicies);
+AABB::AABB(const idx_t begin, const idx_t end, const vector<T>& verties) {
+    m_min = minimum(verties, begin, end);
+    m_max = maximum(verties, begin, end);
 }
+
+template <class T>
+AABB::AABB(const vector<int>& indicies, const vector<T>& verties)
+    : AABB(indicies.begin(), indicies.end(), verties) {
+    }
 
 AABB::AABB() {
     m_min = Vec3f(-INF, -INF, -INF);

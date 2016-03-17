@@ -12,7 +12,8 @@ struct BHVNode {
 
     BHVNode* left;
     BHVNode* right;
-    std::vector<int> indicies;
+    std::vector<int>::iterator begin;
+    std::vector<int>::iterator end;
 
     ~BHVNode() {
         delete left;

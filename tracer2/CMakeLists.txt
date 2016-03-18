@@ -1,0 +1,23 @@
+cmake_minimum_required (VERSION 2.8)
+
+project (raytracer)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+file(GLOB sources src/*.cpp src/*.h)
+file(GLOB tests test/*.cc)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+
+find_package( OpenCV REQUIRED )
+find_package( Eigen3 REQUIRED )
+include_directories(${OpenCV_INCLUDE_DIRS})
+include_directories(${Eigen3_INCLUDE_DIRS})
+# find_package( cppformat REQUIRED )
+# include_directories(${cppformat_INCLUDE_DIRS})
+
+add_library(tracer_lib ${sources})
+add_library(tiny_tracer_lib ./lib/tiny_obj_loader.h ./lib/tiny_obj_loader.cc)
+add_executable(raytracer src/main.cc)
+add_executable(tester ${tests})
+target_link_libraries(raytracer tracer_lib ${OpenCV_LIBS})
+target_link_libraries(tracer_lib ${OpenCV_LIBS} tiny_tracer_lib)
+target_link_libraries(tester tracer_lib ${OpenCV_LIBS} tiny_tracer_lib ${Eigen3_LIBS})

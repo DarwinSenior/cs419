@@ -5,13 +5,14 @@
 #include "../src/ray.h"
 #include "../src/sphere.h"
 #include "../src/triangle.h"
+#include "../src/typedef.h"
 #include "catch.hpp"
 
 namespace {
-auto x = Vec3f(1, 0, 0);
-auto y = Vec3f(0, 1, 0);
-auto z = Vec3f(0, 0, 1);
-auto zero = Vec3f(0, 0, 0);
+auto x = vec3(1, 0, 0);
+auto y = vec3(0, 1, 0);
+auto z = vec3(0, 0, 1);
+auto zero = vec3(0, 0, 0);
 auto t1 = Triangle(zero, x, y);
 auto t2 = Triangle(zero, x, z);
 auto t3 = Triangle(zero, y, z);
@@ -32,30 +33,30 @@ auto ss = vector<Sphere>({s1, s2, s3});
 }
 
 TEST_CASE("MAX and MIN", "[AABB]") {
-    vector<Vec3f> vecs;
-    vecs.push_back(Vec3f(1, 0, 0));
-    vecs.push_back(Vec3f(0, 1, 0));
-    vecs.push_back(Vec3f(0, 0, 1));
-    REQUIRE(maximum(vecs) == Vec3f(1, 1, 1));
-    REQUIRE(minimum(vecs) == Vec3f(0, 0, 0));
+    vector<vec3> vecs;
+    vecs.push_back(vec3(1, 0, 0));
+    vecs.push_back(vec3(0, 1, 0));
+    vecs.push_back(vec3(0, 0, 1));
+    REQUIRE(maximum(vecs) == vec3(1, 1, 1));
+    REQUIRE(minimum(vecs) == vec3(0, 0, 0));
 }
 
 TEST_CASE("Spheres", "[AABB]") {
     AABB boxd(ss);
     AABB box;
     box = boxd;
-    REQUIRE(box.min_p() == Vec3f(-3, -3, -3));
-    REQUIRE(box.max_p() == Vec3f(4, 4, 4));
+    REQUIRE(box.min_p() == vec3(-3, -3, -3));
+    REQUIRE(box.max_p() == vec3(4, 4, 4));
     REQUIRE(box.volume() == 7 * 7 * 7);
-    REQUIRE(box.center() == Vec3f(0.5, 0.5, 0.5));
+    REQUIRE(box.center() == vec3(0.5, 0.5, 0.5));
 }
 
 TEST_CASE("Bounding Box", "[AABB]") {
     AABB box(ts);
     REQUIRE(box.volume() == 1);
     REQUIRE(box.surface_area() == 6);
-    REQUIRE(box.center() == Vec3f(0.5, 0.5, 0.5));
-    REQUIRE(box.inside(Vec3f(0.3, 0.6, 0.7)));
+    REQUIRE(box.center() == vec3(0.5, 0.5, 0.5));
+    REQUIRE(box.inside(vec3(0.3, 0.6, 0.7)));
 }
 
 TEST_CASE("AABB distance", "[AABB]") {
@@ -70,7 +71,7 @@ TEST_CASE("AABB distance", "[AABB]") {
     dist = box.intersect(ray);
     REQUIRE(dist == 1);
     ray.o = -x - z + 0.5 * y;
-    ray.d = normalize(x + z);
+    ray.d = (x + z).normalized();
     cout << "ray.d " << ray.d << endl;
     dist = box.intersect(ray);
     REQUIRE(dist == Approx(sqrt(2)));

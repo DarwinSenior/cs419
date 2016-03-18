@@ -7,17 +7,13 @@
 #include "../src/ray.h"
 #include "../src/sphere.h"
 #include "../src/triangle.h"
+#include "../src/typedef.h"
 #include "catch.hpp"
 
 namespace {
-// std::random_device rd;
-// std::mt19937 generator(rd);
-// std::uniform_real_distribution<float> distribution(0, 1);
-float INF = std::numeric_limits<float>::infinity();
-// float random() { return distribution(generator); }
 float random() { return (float)rand() / ((float)RAND_MAX); }
 
-cv::Vec3f rand_point() { return cv::Vec3f(random(), random(), random()); }
+vec3 rand_point() { return vec3(random(), random(), random()); }
 
 Triangle rand_triangle() {
     return Triangle(rand_point(), rand_point(), rand_point());
@@ -28,13 +24,13 @@ TEST_CASE("test virtual", "[geometry]") {
     using namespace std;
     using namespace cv;
 
-    Geometry* triangle = new Triangle(
-        Vec3f(1.0, 0.0, 6.0), Vec3f(0.0, 1.0, 6.0), Vec3f(1.0, 1.0, 6.0));
+    Geometry* triangle = new Triangle(vec3(1.0, 0.0, 6.0), vec3(0.0, 1.0, 6.0),
+                                      vec3(1.0, 1.0, 6.0));
 
     auto ray = Ray();
-    Vec3f ux = Vec3f(1.0, 0.0, 0.0);
-    Vec3f uy = Vec3f(0.0, 1.0, 0.0);
-    Vec3f uz = Vec3f(0.0, 0.0, 1.0);
+    vec3 ux = vec3(1.0, 0.0, 0.0);
+    vec3 uy = vec3(0.0, 1.0, 0.0);
+    vec3 uz = vec3(0.0, 0.0, 1.0);
     auto inter = Intersect(ray);
 
     ray.d = uz;
@@ -50,12 +46,12 @@ TEST_CASE("test triangle", "[geometry]") {
     using namespace cv;
 
     float inf = std::numeric_limits<float>::infinity();
-    Vec3f ux = Vec3f(1.0, 0.0, 0.0);
-    Vec3f uy = Vec3f(0.0, 1.0, 0.0);
-    Vec3f uz = Vec3f(0.0, 0.0, 1.0);
+    vec3 ux = vec3(1.0, 0.0, 0.0);
+    vec3 uy = vec3(0.0, 1.0, 0.0);
+    vec3 uz = vec3(0.0, 0.0, 1.0);
 
-    Triangle triangle(Vec3f(1.0, 0.0, 6.0), Vec3f(0.0, 1.0, 6.0),
-                      Vec3f(1.0, 1.0, 6.0));
+    Triangle triangle(vec3(1.0, 0.0, 6.0), vec3(0.0, 1.0, 6.0),
+                      vec3(1.0, 1.0, 6.0));
     SECTION("hit triangle") {
         auto ray = Ray();
         ray.d = uz;
@@ -84,8 +80,8 @@ TEST_CASE("random triangle test", "[geometry]") {
     for (size_t i = 0; i < 20; i++) {
         auto triangle = rand_triangle();
         Ray ray;
-        ray.o = rand_point() + Vec3f(1, 1, 1);
-        ray.d = normalize(triangle.center() - ray.o);
+        ray.o = rand_point() + vec3(1, 1, 1);
+        ray.d = (triangle.center() - ray.o).normalized();
         Intersect inter(ray);
         triangle.intersect(ray, inter);
         REQUIRE(inter.dist < INF);
@@ -98,8 +94,8 @@ TEST_CASE("random triangle inverse test", "[geometry]") {
     for (size_t i = 0; i < 20; i++) {
         auto triangle = rand_triangle();
         Ray ray;
-        ray.o = rand_point() + Vec3f(1, 1, 1);
-        ray.d = -normalize(triangle.center() - ray.o);
+        ray.o = rand_point() + vec3(1, 1, 1);
+        ray.d = -(triangle.center() - ray.o).normalized();
         Intersect inter(ray);
         triangle.intersect(ray, inter);
         REQUIRE(inter.dist == INF);
@@ -111,9 +107,9 @@ TEST_CASE("test sphere", "[geometry]") {
     using namespace cv;
 
     float inf = std::numeric_limits<float>::infinity();
-    Vec3f ux = Vec3f(1.0, 0.0, 0.0);
-    Vec3f uy = Vec3f(0.0, 1.0, 0.0);
-    Vec3f uz = Vec3f(0.0, 0.0, 1.0);
+    vec3 ux = vec3(1.0, 0.0, 0.0);
+    vec3 uy = vec3(0.0, 1.0, 0.0);
+    vec3 uz = vec3(0.0, 0.0, 1.0);
 
     Sphere sphere(6 * uz, 2);
     SECTION("hit the sphere") {

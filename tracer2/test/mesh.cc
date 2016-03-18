@@ -10,23 +10,15 @@
 #include "../src/AABB.h"
 #include "../src/BHV.h"
 #include "../src/triangle.h"
+#include "../src/typedef.h"
 
-using namespace cv;
 using namespace tinyobj;
 using namespace std;
 
 namespace {
 
-vector<int> sequence(int size) {
-    vector<int> indices(size);
-    for (size_t i = 0; i < indices.size(); i++) {
-        indices[i] = i;
-    }
-    return indices;
-}
-
-Vec3f read_pos(const vector<float>& f, int idx) {
-    return Vec3f(f[idx * 3], f[idx * 3 + 1], f[idx * 3 + 2]);
+vec3 read_pos(const vector<float>& f, int idx) {
+    return vec3(f[idx * 3], f[idx * 3 + 1], f[idx * 3 + 2]);
 }
 
 Triangle read_triangle(const vector<float>& f, const vector<uint>& indices,
@@ -47,15 +39,15 @@ Ray random_ray(const vector<T>& ts) {
     Ray ray;
     AABB box(ts);
     int idx = rand() % ts.size();
-    ray.o = Vec3f(0, 0, 0);
-    ray.d = normalize(ts[idx].center() - ray.o);
+    ray.o = vec3(0, 0, 0);
+    ray.d = (ts[idx].center() - ray.o).normalized();
     Intersect inter(ray);
     ts[idx].intersect(ray, inter);
     return ray;
 }
 
 template <class T>
-float bruteforce_tracer(const vector<T>& ts, Ray& ray) {
+float bruteforce_tracer(const vector<T>& ts, const Ray& ray) {
     Intersect inter(ray);
     for (auto& tri : ts) {
         tri.intersect(ray, inter);
@@ -64,7 +56,7 @@ float bruteforce_tracer(const vector<T>& ts, Ray& ray) {
 }
 
 template <class T>
-float bounder_tracer(const BHV<T>& bounder, Ray& ray) {
+float bounder_tracer(const BHV<T>& bounder, const Ray& ray) {
     Intersect inter(ray);
     inter.noIntersection();
     bounder.intersect(ray, inter);
@@ -109,11 +101,11 @@ TEST_CASE("TESTING with triangle splitting", "[mesh]") {
 
 TEST_CASE("TESTING with sphere splitting", "[mesh]") {
     vector<Sphere> spheres;
-    Vec3f bound(100, 100, 100);
+    vec3 bound(100, 100, 100);
     for (size_t i = 0; i < 7000; i++) {
         spheres.push_back(generate_spheres(0.1, AABB(-bound, bound)));
     }
-    BHV<Sphere> bounder(spheres, sequence(spheres.size()));
+    BHV<Sphere> bounder(spheres);
     for (int i = 0; i < 200; i++) {
         auto ray = random_ray(spheres);
         REQUIRE(bruteforce_tracer(spheres, ray) ==

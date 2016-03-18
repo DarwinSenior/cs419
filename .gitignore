@@ -1,2 +1,9 @@
 *.swp
 *.png
+.DS_Store
+CMakeFiles
+*.zip
+**/*.gitmodules
+**/bin
+**/*.a
+**/Makefile

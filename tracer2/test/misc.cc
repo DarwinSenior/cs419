@@ -36,9 +36,20 @@ TEST_CASE("LOG", "[MISC]") {
     REQUIRE(log2i(60) == 6);
 }
 
-TEST_CASE("Eigen sanity check", "[MISC]"){
-    Eigen::MatrixXd m(2,2);
+TEST_CASE("Eigen sanity check", "[MISC]") {
+    Eigen::MatrixXd m(2, 2);
     m(0, 0) = 3;
     auto m2 = m * 2;
-    REQUIRE(m2(0,0) == 6);
+    REQUIRE(m2(0, 0) == 6);
+}
+
+TEST_CASE("Eigen of three-d array", "[MISC]") {
+    // check that eigen has contiguous memory
+    auto image = img_t(5, 5);
+    for (int i = 0; i < 5; i++) {
+        for (int j = 0; j < 5; j++) {
+            float x = i * 5 + j;
+            image(i, j) = arr3(x, x + 1, x + 2);
+        }
+    }
 }

@@ -9,6 +9,7 @@
 #include "sample.h"
 #include "scene.h"
 #include "sphere.h"
+#include "img_util.h"
 using namespace std;
 using namespace cv;
 
@@ -56,12 +57,6 @@ int main() {
     //     make_shared<DirectionLight>(0.3, white, (vec3(0, -1, 1)).normalized()));
     scene.shadow(false);
     auto img = scene.render(500, RT::uniform_sample);
-    namedWindow("show1");
-    // imshow("show1", img);
-    // scene.shadow(true);
-    // img = scene.render(500, RT::uniform_sample);
-    // namedWindow("show2");
-    // imshow("show2", img);
-    // waitKey(0);
+    RT::write_png("first.png", img);
     return 0;
 }

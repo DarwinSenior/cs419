@@ -22,7 +22,7 @@ bool not_shadowed(const Light& light, const Intersect& inter,
         object.intersect(ray, new_inter);
     }
 
-    return (new_inter.dist + epsilon > light.dist(inter));
+    return (new_inter.dist + epsilon >= light.dist(inter));
 }
 }
 

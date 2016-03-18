@@ -72,7 +72,6 @@ TEST_CASE("AABB distance", "[AABB]") {
     REQUIRE(dist == 1);
     ray.o = -x - z + 0.5 * y;
     ray.d = (x + z).normalized();
-    cout << "ray.d " << ray.d << endl;
     dist = box.intersect(ray);
     REQUIRE(dist == Approx(sqrt(2)));
 }

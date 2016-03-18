@@ -1,8 +1,8 @@
 #ifndef AABB_H_
 #define AABB_H_
 
-#include <opencv2/opencv.hpp>
 #include <vector>
+#include "typedef.h"
 
 #include "ray.h"
 #include "sphere.h"
@@ -19,21 +19,21 @@ class AABB {
          const std::vector<int>::const_iterator end,
          const std::vector<T>& verties);
     AABB();
-    AABB(const cv::Vec3f min, const cv::Vec3f max);
+    AABB(const vec3 min, const vec3 max);
     AABB(const AABB& other);
 
-    const cv::Vec3f& min_p() const { return m_min; }
-    const cv::Vec3f& max_p() const { return m_max; }
+    const vec3& min_p() const { return m_min; }
+    const vec3& max_p() const { return m_max; }
 
-    cv::Vec3f center();
+    vec3 center();
     float volume();
     float surface_area();
-    bool inside(cv::Vec3f point);
+    bool inside(vec3 point);
     float intersect(const Ray& ray);
 
    private:
-    cv::Vec3f m_min;
-    cv::Vec3f m_max;
+    vec3 m_min;
+    vec3 m_max;
 };
 
 #endif

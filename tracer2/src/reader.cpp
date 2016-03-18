@@ -3,14 +3,13 @@
 #include "triangle.h"
 
 using namespace std;
-using namespace cv;
 using namespace tinyobj;
 
 
 namespace RT {
 
-Vec3f read_pos(const vector<float>& f, int idx) {
-    return Vec3f(f[idx * 3], f[idx * 3 + 1], f[idx * 3 + 2]);
+vec3 read_pos(const vector<float>& f, int idx) {
+    return vec3(f[idx * 3], f[idx * 3 + 1], f[idx * 3 + 2]);
 }
 
 Triangle read_triangle(const vector<float>& f, const vector<uint>& indices,

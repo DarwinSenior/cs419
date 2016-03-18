@@ -2,7 +2,7 @@
 #define READER_H_
 
 #include <memory>
-#include <opencv2/opencv.hpp>
+#include "typedef.h"
 #include <string>
 #include <vector>
 #include "../lib/tiny_obj_loader.h"

@@ -1,11 +1,11 @@
 #ifndef RAY_H
 #define RAY_H
-#include <opencv2/opencv.hpp>
+#include "typedef.h"
 
 struct Ray{
-    cv::Vec3f o; // origin
-    cv::Vec3f d; // direction
-    cv::Vec3f pos(float dist) const{
+    vec3 o; // origin
+    vec3 d; // direction
+    vec3 pos(float dist) const{
         return o+d*dist;
     }
 };

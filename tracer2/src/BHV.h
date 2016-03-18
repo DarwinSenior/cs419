@@ -1,7 +1,7 @@
 #ifndef BHV_H_
 #define BHV_H_
 
-#include <opencv2/opencv.hpp>
+#include "typedef.h"
 #include <vector>
 #include <string>
 

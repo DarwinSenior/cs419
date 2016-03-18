@@ -4,7 +4,6 @@
 #include "triangle.h"
 
 using namespace std;
-using namespace cv;
 
 void BHV_CODE_GENERATOR() {
     vector<Triangle> tris;

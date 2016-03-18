@@ -1,37 +1,32 @@
 #ifndef SCREEN_H
 #define SCREEN_H
 
-#include <opencv2/opencv.hpp>
 #include <utility>
 #include "camera.h"
 #include "ray.h"
+#include "typedef.h"
 
-class Screen{
-public:
-    Screen(cv::Size2f size, float focus);
-    Screen(){
-        m_size = cv::Size(4, 4);
-        m_focus = 1;
-    }
+/**
+ *  standard for size and position
+ *  pos[0] -> pos.x pos[1] -> pos.y
+ *  size[0] -> size.width size[1] -> size.height
+ */
+class Screen {
+   public:
+    Screen(vec2 size, float focus);
+    Screen();
 
     float focus() const { return m_focus; }
-    void focus(const float& new_focus){
-        m_focus = new_focus;
-    }
-    cv::Size size() const { return m_size; }
-    void size(const cv::Size2f& new_size){
-        m_size = new_size;
-    }
+    void focus(const float& new_focus) { m_focus = new_focus; }
+    size2 size() const { return m_size; }
+    void size(const size2& new_size) { m_size = new_size; }
     void set_othorgraphic();
-    void shoot_ray(const Camera& camera, const cv::Point2f& pos, Ray& ray) const;
-    void shoot_ray(const Camera& camera, float x, float y, Ray& ray) const;
+    void shoot_ray(const Camera& camera, const arr2& pos, Ray& ray) const;
 
-
-private:
-    cv::Vec3f ray_pos(const Camera& cam, cv::Point2f pos) const;
-    cv::Size2f m_size;
+   private:
+    vec3 ray_pos(const Camera& cam, const arr2& pos) const;
+    size2 m_size;
     float m_focus;
 };
-
 
 #endif

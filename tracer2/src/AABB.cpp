@@ -2,7 +2,6 @@
 
 #include <limits>
 
-using namespace cv;
 using namespace std;
 
 /**
@@ -20,22 +19,20 @@ void AABB_CODE_GENERATOR() {
     AABB d(sphs);
 }
 namespace {
+
 using idx_t = std::vector<int>::const_iterator;
-float INF = std::numeric_limits<float>::infinity();
-void maximum_update(Vec3f& max_vec, const Vec3f& v) {
-    max_vec[0] = std::max(v[0], max_vec[0]);
-    max_vec[1] = std::max(v[1], max_vec[1]);
-    max_vec[2] = std::max(v[2], max_vec[2]);
+const vec3 unbound(INF, INF, INF);
+
+void maximum_update(vec3& max_vec, const vec3& v) {
+    max_vec = max_vec.cwiseMax(v);
 }
 
-void minimum_update(Vec3f& min_vec, const Vec3f& v) {
-    min_vec[0] = std::min(v[0], min_vec[0]);
-    min_vec[1] = std::min(v[1], min_vec[1]);
-    min_vec[2] = std::min(v[2], min_vec[2]);
+void minimum_update(vec3& min_vec, const vec3& v) {
+    min_vec = min_vec.cwiseMin(v);
 }
 
-Vec3f maximum(const vector<Vec3f>& vecs) {
-    auto max_vec = Vec3f();
+vec3 maximum(const vector<vec3>& vecs) {
+    auto max_vec = vec3();
     max_vec = vecs[0];
     for (auto& v : vecs) {
         maximum_update(max_vec, v);
@@ -43,30 +40,30 @@ Vec3f maximum(const vector<Vec3f>& vecs) {
     return max_vec;
 }
 
-void maximum_update(Vec3f& v, const Triangle& triangle) {
+void maximum_update(vec3& v, const Triangle& triangle) {
     maximum_update(v, triangle.p1());
     maximum_update(v, triangle.p2());
     maximum_update(v, triangle.p3());
 }
 
-void maximum_update(Vec3f& v, const Sphere& sphere) {
+void maximum_update(vec3& v, const Sphere& sphere) {
     float r = sphere.radius();
-    maximum_update(v, sphere.center() + Vec3f(r, r, r));
+    maximum_update(v, sphere.center() + vec3(r, r, r));
 }
 
-void minimum_update(Vec3f& v, const Triangle& triangle) {
+void minimum_update(vec3& v, const Triangle& triangle) {
     minimum_update(v, triangle.p1());
     minimum_update(v, triangle.p2());
     minimum_update(v, triangle.p3());
 }
-void minimum_update(Vec3f& v, const Sphere& sphere) {
+void minimum_update(vec3& v, const Sphere& sphere) {
     float r = sphere.radius();
-    minimum_update(v, sphere.center() - Vec3f(r, r, r));
+    minimum_update(v, sphere.center() - vec3(r, r, r));
 }
 
 template <class T>
-Vec3f maximum(const vector<T>& geos, const idx_t begin, const idx_t end) {
-    auto max_vec = Vec3f(-INF, -INF, -INF);
+vec3 maximum(const vector<T>& geos, const idx_t begin, const idx_t end) {
+    vec3 max_vec = -unbound;
     for (auto idx = begin; idx < end; idx++) {
         maximum_update(max_vec, geos[*idx]);
     }
@@ -74,8 +71,8 @@ Vec3f maximum(const vector<T>& geos, const idx_t begin, const idx_t end) {
 }
 
 template <class T>
-Vec3f maximum(const vector<T>& vecs) {
-    auto max_vec = Vec3f(-INF, -INF, -INF);
+vec3 maximum(const vector<T>& vecs) {
+    vec3 max_vec = -unbound;
     for (auto& geo : vecs) {
         maximum_update(max_vec, geo);
     }
@@ -83,8 +80,8 @@ Vec3f maximum(const vector<T>& vecs) {
 }
 
 template <class T>
-Vec3f minimum(const vector<T>& geos, idx_t begin, idx_t end) {
-    auto min_vec = Vec3f(INF, INF, INF);
+vec3 minimum(const vector<T>& geos, idx_t begin, idx_t end) {
+    vec3 min_vec = unbound;
     for (auto idx = begin; idx < end; idx++) {
         minimum_update(min_vec, geos[*idx]);
     }
@@ -92,8 +89,8 @@ Vec3f minimum(const vector<T>& geos, idx_t begin, idx_t end) {
 }
 
 template <class T>
-Vec3f minimum(const vector<T>& vecs) {
-    auto min_vec = Vec3f(INF, INF, INF);
+vec3 minimum(const vector<T>& vecs) {
+    vec3 min_vec = unbound;
     for (auto& v : vecs) {
         minimum_update(min_vec, v);
     }
@@ -101,7 +98,7 @@ Vec3f minimum(const vector<T>& vecs) {
 }
 }
 
-AABB::AABB(const Vec3f min, const Vec3f max) {
+AABB::AABB(const vec3 min, const vec3 max) {
     m_max = max;
     m_min = min;
 }
@@ -117,7 +114,6 @@ AABB::AABB(const vector<T>& verties) {
     m_max = maximum(verties);
 }
 
-
 template <class T>
 AABB::AABB(const idx_t begin, const idx_t end, const vector<T>& verties) {
     m_min = minimum(verties, begin, end);
@@ -126,12 +122,11 @@ AABB::AABB(const idx_t begin, const idx_t end, const vector<T>& verties) {
 
 template <class T>
 AABB::AABB(const vector<int>& indicies, const vector<T>& verties)
-    : AABB(indicies.begin(), indicies.end(), verties) {
-    }
+    : AABB(indicies.begin(), indicies.end(), verties) {}
 
 AABB::AABB() {
-    m_min = Vec3f(-INF, -INF, -INF);
-    m_max = Vec3f(INF, INF, INF);
+    m_min = -unbound;
+    m_max = unbound;
 }
 
 float AABB::volume() {
@@ -139,14 +134,14 @@ float AABB::volume() {
     return diff[0] * diff[1] * diff[2];
 }
 
-Vec3f AABB::center() { return (m_max + m_min) / 2; }
+vec3 AABB::center() { return (m_max + m_min) / 2; }
 
 float AABB::surface_area() {
     auto diff = m_max - m_min;
     return (diff[0] * diff[1] + diff[0] * diff[2] + diff[1] * diff[2]) * 2;
 }
 
-bool AABB::inside(Vec3f point) {
+bool AABB::inside(vec3 point) {
     return (point[0] < m_max[0]) && (point[1] < m_max[1]) &&
            (point[2] < m_max[2]) && (point[0] > m_min[0]) &&
            (point[1] > m_min[1]) && (point[2] > m_min[2]);
@@ -154,18 +149,10 @@ bool AABB::inside(Vec3f point) {
 
 // http://gamedev.stackexchange.com/questions/18436/most-efficient-aabb-vs-ray-collision-algorithms
 float AABB::intersect(const Ray& ray) {
-    Vec3f min_x = Vec3f((m_min[0] - ray.o[0]) / ray.d[0],
-                        (m_min[1] - ray.o[1]) / ray.d[1],
-                        (m_min[2] - ray.o[2]) / ray.d[2]);
-
-    Vec3f max_x = Vec3f((m_max[0] - ray.o[0]) / ray.d[0],
-                        (m_max[1] - ray.o[1]) / ray.d[1],
-                        (m_max[2] - ray.o[2]) / ray.d[2]);
-
-    float tmin = max(max(min(min_x[0], max_x[0]), min(min_x[1], max_x[1])),
-                     min(min_x[2], max_x[2]));
-    float tmax = min(min(max(min_x[0], max_x[0]), max(min_x[1], max_x[1])),
-                     max(min_x[2], max_x[2]));
+    vec3 min_x = (m_min - ray.o).cwiseQuotient(ray.d);
+    vec3 max_x = (m_max - ray.o).cwiseQuotient(ray.d);
+    float tmin = min_x.cwiseMin(max_x).minCoeff();
+    float tmax = min_x.cwiseMax(max_x).maxCoeff();
 
     if (tmax < 0) {
         return INF;

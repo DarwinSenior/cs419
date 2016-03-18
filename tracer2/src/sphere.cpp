@@ -2,11 +2,9 @@
 #include <cmath>
 #include <utility>
 
-using namespace cv;
 using namespace std;
 
 namespace {
-float INF = numeric_limits<float>::infinity();
 pair<float, float> solve(float a, float b, float c) {
     float delta = b * b - 4 * a * c;
     if (delta < 0) {
@@ -18,7 +16,7 @@ pair<float, float> solve(float a, float b, float c) {
 }
 }
 
-Sphere::Sphere(Vec3f pos, float radius) {
+Sphere::Sphere(vec3 pos, float radius) {
     m_center = pos;
     m_radius = radius;
 }
@@ -38,9 +36,9 @@ bool Sphere::intersect(const Ray& ray, Intersect& inter) const {
     if (finial_dist < inter.dist) {
         inter.dist = finial_dist;
         inter.pos = ray.pos(inter.dist);
-        inter.norm = normalize(inter.pos - m_center);
+        inter.norm = (inter.pos - m_center).normalized();
         return true;
-    }else{
+    } else {
         return false;
     }
 }

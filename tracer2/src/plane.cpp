@@ -3,8 +3,8 @@
 using namespace std;
 using namespace cv;
 
-Plane::Plane(Vec3f norm, float dist) {
-    m_norm = normalize(norm);
+Plane::Plane(vec3 norm, float dist) {
+    m_norm = norm.normalized();
     m_dist = dist;
 }
 
@@ -15,7 +15,7 @@ bool Plane::intersect(const Ray& ray, Intersect& inter) const {
         inter.norm = m_norm;
         inter.pos = ray.pos(dist);
         return true;
-    }else{
+    } else {
         return false;
     }
 }

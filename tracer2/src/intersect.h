@@ -4,12 +4,13 @@
 #include <opencv2/opencv.hpp>
 #include <limits>
 #include "ray.h"
+#include "typedef.h"
 
 class Material;
 struct Intersect {
-    cv::Vec3f norm;
-    cv::Vec3f pos;
-    cv::Vec3f raydir;
+    vec3 norm;
+    vec3 pos;
+    vec3 raydir;
     std::shared_ptr<Material> material;
     float dist;
     float noIntersection() {

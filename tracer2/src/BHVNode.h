@@ -2,7 +2,7 @@
 #define BHVNODE_H_
 
 #include <iostream>
-#include <opencv2/opencv.hpp>
+#include "typedef.h"
 #include <vector>
 
 #include "AABB.h"

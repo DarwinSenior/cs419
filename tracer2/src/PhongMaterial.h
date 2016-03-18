@@ -1,7 +1,7 @@
 #ifndef PHONGMATERIAL_H_
 #define PHONGMATERIAL_H_
 
-#include <opencv2/opencv.hpp>
+#include "typedef.h"
 
 #include "ambient_brdf.h"
 #include "diffuse_brdf.h"
@@ -10,9 +10,9 @@
 
 class PhongMaterial : public Material {
    public:
-    PhongMaterial(float ks, float kd, float alpha, cv::Vec3f colour);
+    PhongMaterial(float ks, float kd, float alpha, vec3 colour);
 
-    cv::Vec3f shade(const Intersect& inter, const Light& light);
+    arr3 shade(const Intersect& inter, const Light& light);
 
 
    private:

@@ -1,19 +1,19 @@
 #ifndef DIFFUSE_BRDF_H_
 #define DIFFUSE_BRDF_H_
 
-#include <opencv2/opencv.hpp>
 #include "BRDF.h"
+#include "typedef.h"
 
 class DiffuseBRDF : public BRDF {
    public:
-    DiffuseBRDF(float k, cv::Vec3f colour);
+    DiffuseBRDF(float k, arr3 colour);
 
-    cv::Vec3f f(const cv::Vec3f& n, const cv::Vec3f& w_i,
-                const cv::Vec3f& w_o) const;
+    arr3 f(const vec3& n, const vec3& w_i,
+                const vec3& w_o) const;
 
    private:
     const float m_k;
-    const cv::Vec3f m_colour;
+    const arr3 m_colour;
 };
 
 #endif

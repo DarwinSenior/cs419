@@ -9,7 +9,6 @@ class Geometry {
    public:
     virtual bool intersect(const Ray&, Intersect&) const = 0;
    private:
-    cv::Mat4f m_transform;
 };
 
 #endif

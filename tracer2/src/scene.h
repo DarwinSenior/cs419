@@ -27,14 +27,14 @@ class Scene {
     /**
      *  render the scene to an nxn pixel picture and using sample method method
      */
-    cv::Mat3f render(int n = 200,
+    img_t render(int n = 200,
                      sample_method method = RT::uniform_sample) const;
 
    private:
     /**
      *  calculate the first rate light
      */
-    cv::Vec3f integrate_light(const Ray& ray) const;
+    arr3 integrate_light(const Ray& ray) const;
 
     std::vector<light_ptr> m_lights;
     std::vector<Object> m_objects;

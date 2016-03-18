@@ -11,7 +11,6 @@ using namespace cv;
 using namespace RT;
 using json = nlohmann::json;
 namespace {
-float INF = std::numeric_limits<float>::infinity();
 float epsilon = 0.001;
 bool not_shadowed(const Light& light, const Intersect& inter,
                   const vector<Object>& objects) {
@@ -31,35 +30,32 @@ Scene::Scene() {
     m_lights = vector<light_ptr>();
     m_objects = vector<Object>();
     m_camera = Camera();
-    m_screen = Screen(Size(4, 4), 2.0);
+    m_screen = Screen(vec2(4, 4), 2.0);
 }
 
-Mat3f Scene::render(int n, sample_method method) const {
-    Mat3f result = Mat3f(n, n);
-    Mat2f samples = method(n);
+img_t Scene::render(int n, sample_method method) const {
+    img_t result = img_t(n, n);
+    sample_t samples = method(n);
     Ray ray;
-    for (int i = 0; i < result.rows; i++) {
-        for (int j = 0; j < result.cols; j++) {
-            float x = samples[i][j][0];
-            float y = samples[i][j][1];
-
-            m_screen.shoot_ray(m_camera, x, y, ray);
-            result[i][j] = integrate_light(ray);
+    for (int y = 0; y < n; y++) {
+        for (int x = 0; x < n; x++) {
+            m_screen.shoot_ray(m_camera, samples(y, x), ray);
+            result(y, x) = integrate_light(ray);
         }
     }
     return result;
 }
 
-Vec3f Scene::integrate_light(const Ray& ray) const {
+arr3 Scene::integrate_light(const Ray& ray) const {
     auto inter = Intersect(ray);
     for (auto& object : m_objects) {
         object.intersect(ray, inter);
     }
-    auto integral = Vec3f();
+    auto integral = arr3();
     if (inter.dist != INF) {
         for (auto& light_ptr : m_lights) {
             if (!m_shadow || not_shadowed(*light_ptr, inter, m_objects)) {
-                integral += inter.material->shade(inter, *light_ptr);
+                integral = integral + inter.material->shade(inter, *light_ptr);
             }
         }
     }

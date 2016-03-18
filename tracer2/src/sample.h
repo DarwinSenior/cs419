@@ -2,11 +2,11 @@
 #define SAMPLE_H
 
 #include <vector>
-#include <opencv2/opencv.hpp>
+#include "typedef.h"
 namespace RT{
-    cv::Mat2f uniform_sample(int n);
-    cv::Mat2f multi_jittered(int n);
-    cv::Mat2f hammersley(int n);
+    sample_t uniform_sample(int n);
+    sample_t multi_jittered(int n);
+    sample_t hammersley(int n);
 }
 
 #endif

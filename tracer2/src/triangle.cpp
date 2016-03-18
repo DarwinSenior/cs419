@@ -3,11 +3,11 @@
 
 using namespace cv;
 
-Triangle::Triangle(Vec3f p1, Vec3f p2, Vec3f p3){
+Triangle::Triangle(vec3 p1, vec3 p2, vec3 p3){
     m_p1 = p1;
     m_p2 = p2;
     m_p3 = p3;
-    m_norm = normalize((m_p1-m_p2).cross(m_p1-m_p3));
+    m_norm =(m_p1-m_p2).cross(m_p1-m_p3).normalized();
 }
 
 bool Triangle::intersect(const Ray& ray, Intersect& intersect) const{
@@ -27,7 +27,7 @@ bool Triangle::intersect(const Ray& ray, Intersect& intersect) const{
 }
 
 
-bool Triangle::inside_triange(const Vec3f& p) const{
+bool Triangle::inside_triange(const vec3& p) const{
     auto v1 = m_p2-m_p1;
     auto v2 = m_p3-m_p1;
     auto v3 = p-m_p1;
@@ -45,6 +45,6 @@ bool Triangle::inside_triange(const Vec3f& p) const{
     return (u>=0) && (v>=0) && (u+v<1);
 }
 
-Vec3f Triangle::center() const{
+vec3 Triangle::center() const{
     return (m_p1+m_p2+m_p3)/3;
 }

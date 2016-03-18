@@ -79,6 +79,26 @@ TEST_CASE("testing reading obj file", "[mesh]") {
     INFO("number of normals" << cow.mesh.normals.size());
 }
 
+TEST_CASE("TESTING with simple splitting", "[mesh]") {
+    vector<shape_t> shapes;
+    vector<material_t> materials;
+    string inputfile = "box.obj";
+    string err;
+    bool ifreturned = LoadObj(shapes, materials, err, inputfile.c_str());
+    auto& cow = shapes[0];
+    vector<Triangle> triangles;
+    for (size_t i = 0; i < cow.mesh.indices.size() / 3; i++) {
+        triangles.push_back(
+            read_triangle(cow.mesh.positions, cow.mesh.indices, i));
+    }
+    BHV<Triangle> bounder(triangles);
+    for (int i = 0; i < 200; i++) {
+        auto ray = random_ray(triangles);
+        REQUIRE(bruteforce_tracer(triangles, ray) ==
+                (bounder_tracer(bounder, ray)));
+    }
+}
+
 TEST_CASE("TESTING with triangle splitting", "[mesh]") {
     vector<shape_t> shapes;
     vector<material_t> materials;

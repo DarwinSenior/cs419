@@ -148,11 +148,12 @@ bool AABB::inside(vec3 point) {
 }
 
 // http://gamedev.stackexchange.com/questions/18436/most-efficient-aabb-vs-ray-collision-algorithms
+
 float AABB::intersect(const Ray& ray) {
     vec3 min_x = (m_min - ray.o).cwiseQuotient(ray.d);
     vec3 max_x = (m_max - ray.o).cwiseQuotient(ray.d);
-    float tmin = min_x.cwiseMin(max_x).minCoeff();
-    float tmax = min_x.cwiseMax(max_x).maxCoeff();
+    float tmin = min_x.cwiseMin(max_x).maxCoeff();
+    float tmax = min_x.cwiseMax(max_x).minCoeff();
 
     if (tmax < 0) {
         return INF;

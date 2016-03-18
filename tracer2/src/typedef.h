@@ -1,6 +1,7 @@
 #ifndef TYPE_DEF_H
 #define TYPE_DEF_H
 
+
 #include <memory>
 #include <opencv2/opencv.hpp>
 #include <Eigen3/Eigen/Eigen>

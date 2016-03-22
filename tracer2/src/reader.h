@@ -13,7 +13,7 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 
 namespace RT {
-bool read_meshes(const std::string filename, std::vector<geo_ptr>& geo);
+bool read_meshes(const std::string filename, std::vector<geo_ptr>& geo, float scalar=1.0);
 }
 
 #endif

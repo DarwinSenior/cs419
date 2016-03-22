@@ -83,11 +83,14 @@ BHVNode* create_node(const vector<T>& geos, idx_t begin, idx_t end) {
  *  testing intersection on leaf case, try intersect every node
  */
 template <class T>
-void intersect_(const idx_t begin, const idx_t end, const vector<T>& geos,
+bool intersect_(const idx_t begin, const idx_t end, const vector<T>& geos,
                 const Ray& ray, Intersect& inter) {
+    bool intersected = false;
     for (auto it = begin; it < end; it++) {
-        geos[*it].intersect(ray, inter);
+        intersected = geos[*it].intersect(ray, inter) || intersected;
     }
+    number_of_intersection += end - begin;
+    return intersected;
 }
 
 /**
@@ -95,25 +98,28 @@ void intersect_(const idx_t begin, const idx_t end, const vector<T>& geos,
  *  it used the referenced points for intersection
  */
 template <class T>
-void intersect_(const BHVNode* node, const vector<T>& geos, const Ray& ray,
+bool intersect_(const BHVNode* node, const vector<T>& geos, const Ray& ray,
                 Intersect& inter) {
     if (node->is_leaf()) {
-        intersect_(node->begin, node->end, geos, ray, inter);
+        return intersect_(node->begin, node->end, geos, ray, inter);
     } else {
         float left_dist = node->left->box.intersect(ray);
         float right_dist = node->right->box.intersect(ray);
+        number_of_intersection += 2;
         BHVNode* first = node->left;
         BHVNode* second = node->right;
+        bool intersected = intersected;
         if (left_dist > right_dist) {
             swap(first, second);
             swap(left_dist, right_dist);
         }
         if (left_dist < inter.dist) {
-            intersect_(first, geos, ray, inter);
+            intersected = intersect_(first, geos, ray, inter) || intersected;
         }
         if (right_dist < inter.dist) {
-            intersect_(second, geos, ray, inter);
+            intersected = intersect_(second, geos, ray, inter) || intersected;
         }
+        return intersected;
     }
 }
 }
@@ -135,14 +141,9 @@ BHV<T>::~BHV() {
 
 template <class T>
 bool BHV<T>::intersect(const Ray& ray, Intersect& inter) const {
-    float dist = m_root->box.intersect(ray);
-
-    if (dist < inter.dist) {
-        intersect_(m_root, m_geos, ray, inter);
-        return true;
-    } else {
-        return false;
-    }
+    number_of_intersection = 0;
+    bool intersected = intersect_(m_root, m_geos, ray, inter);
+    return intersected;
 }
 
 template <class T>

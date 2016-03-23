@@ -18,6 +18,7 @@ void AABB_CODE_GENERATOR() {
     AABB c(tris);
     AABB d(sphs);
 }
+
 namespace {
 
 using idx_t = std::vector<int>::const_iterator;
@@ -161,3 +162,10 @@ float AABB::intersect(const Ray& ray) {
         return tmin > tmax ? INF : tmin;
     }
 }
+
+template AABB::AABB(const idx_t, const idx_t, const vector<Triangle>&);
+template AABB::AABB(const vector<int>&, const vector<Triangle>&);
+template AABB::AABB(const vector<Triangle>&);
+template AABB::AABB(const idx_t, const idx_t, const vector<Sphere>&);
+template AABB::AABB(const vector<int>&, const vector<Sphere>&);
+template AABB::AABB(const vector<Sphere>&);

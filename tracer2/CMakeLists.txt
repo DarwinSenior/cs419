@@ -1,7 +1,8 @@
 cmake_minimum_required (VERSION 2.8)
 
 project (raytracer)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O3 -std=c++11")
+message(${CMAKE_CXX_FLAGS})
 file(GLOB sources src/*.cpp src/*.h)
 file(GLOB tests test/*.cc)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)

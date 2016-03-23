@@ -5,31 +5,11 @@
 
 using namespace std;
 
-void BHV_CODE_GENERATOR() {
-    vector<Triangle> tris;
-    vector<Sphere> sphs;
-    vector<int> idxs;
-    BHV<Triangle> a(tris, idxs);
-    BHV<Sphere> b(sphs, idxs);
-    BHV<Triangle> c(tris);
-    BHV<Sphere> d(sphs);
-    c = a;
-    Ray ray;
-    Intersect inter(ray);
-    a.intersect(ray, inter);
-    b.intersect(ray, inter);
-    a.print();
-    b.print();
-    a = c;
-    b = d;
-}
 
 namespace {
-
 using idx_t = vector<int>::iterator;
-const float INF = std::numeric_limits<float>::infinity();
 
-int number_of_intersection = 0;
+// int number_of_intersection = 0;
 
 vector<int> sequence(int size) {
     vector<int> indices(size);
@@ -179,3 +159,7 @@ void BHV<T>::print(BHVNode* node, const string& prefix) {
 
     if (node->right && prefix.length() < 5) print(node->right, prefix + "R");
 }
+
+template class BHV<Triangle>;
+template class BHV<Sphere>;
+
